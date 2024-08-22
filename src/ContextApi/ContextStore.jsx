@@ -1,44 +1,63 @@
 import { createContext } from "react";
 import { food_list } from "../assets/assets";
-import { useState,useEffect } from "react";
+import { useState } from "react";
 
-export const ContextStore = createContext(null)
+export const ContextStore = createContext(null);
 
 const StoreContextProvider = (props) => {
+    const [CartItems, SetCartItems] = useState({});
 
-const [CartItems,SetCartItems]= useState({})
+    console.log(food_list);
 
- console.log(food_list);
- 
-const AdToCart = (ItemId)=>{
-   if(!CartItems[ItemId]){
-    SetCartItems((prev)=>({...prev,[ItemId]:1}))
-}else{
-    SetCartItems((prev)=>({...prev,[ItemId]:prev[ItemId]+1}))
-}
-}
-const removeFromCart = (ItemId)=>{
-    SetCartItems((prev)=>({...prev,[ItemId]:prev[ItemId]-1}))
-}
+    const AddToCart = (ItemId) => {
+        if (!CartItems[ItemId]) {
+            SetCartItems((prev) => ({ ...prev, [ItemId]: 1 }));
+        } else {
+            SetCartItems((prev) => ({ ...prev, [ItemId]: prev[ItemId] + 1 }));
+        }
+    };
 
+    const removeFromCart = (ItemId) => {
+        SetCartItems((prev) => {
+            const updatedItems = { ...prev };
+            if (updatedItems[ItemId] > 1) {
+                updatedItems[ItemId] -= 1;
+            } else {
+                delete updatedItems[ItemId];
+            }
+            return updatedItems;
+        });
+    };
 
-useEffect(()=>{
-    console.log(CartItems);
-},[CartItems])
-
-
+    const getTotalCartQty = () => {
+        let total = 0;
+        for (const item in CartItems) {
+            if (CartItems[item] > 0) {
+                const iteminfo = food_list.find(
+                    (product) => product._id === item
+                );
+                if (iteminfo) {
+                    total += iteminfo.price * CartItems[item];
+                }
+            }
+        }
+        return total;
+    };
 
     const contextValue = {
         food_list,
-        CartItems, 
+        CartItems,
         SetCartItems,
-        AdToCart,
-        removeFromCart
-    }
+        AddToCart,
+        removeFromCart,
+        getTotalCartQty,
+    };
+
     return (
         <ContextStore.Provider value={contextValue}>
             {props.children}
         </ContextStore.Provider>
     );
 };
+
 export default StoreContextProvider;

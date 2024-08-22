@@ -6,7 +6,7 @@ import { ContextStore } from './../../ContextApi/ContextStore';
 const FoodItems = ({id,name,image,price,description}) => {
 
   
-  const {CartItems,AdToCart,removeFromCart}=useContext(ContextStore)
+  const {CartItems,AddToCart,removeFromCart}=useContext(ContextStore)
     
  console.log(CartItems);
  
@@ -21,7 +21,7 @@ const FoodItems = ({id,name,image,price,description}) => {
           : <div className="foodItemCounter">
               <img onClick={() => removeFromCart(id)} src={assets.remove_icon_red} alt="" />
               <p>{CartItems[id]}</p>
-              <img  onClick={() => AdToCart(id)} src={assets.add_icon_green} alt="" />
+              <img  onClick={()=> AddToCart(id)} src={assets.add_icon_green} alt="" />
           </div>
         }
     </div>
